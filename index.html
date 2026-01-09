@@ -2,275 +2,439 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>TERMINAL_ACCESS_GRANTED</title>
+    <title>TENEBRAE| NOIR_ESSENCE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-green: #00FF00;
-            --neon-pink: #FF00FF;
-            --neon-cyan: #00FFFF;
-            --dark-bg: #050505;
+            --obsidian: #050505;
+            --wine: #2d0a0a;
+            --silk: #1a1a1a;
+            --gold: #63543b;
+            --pale: #8a8a8a;
+            --crimson: #660000;
         }
+
+        * { box-sizing: border-box; border-radius: 0; }
 
         body {
-            background-color: var(--dark-bg);
-            color: var(--neon-green);
-            font-family: "Courier New", Courier, monospace;
+            background-color: #000;
+            background-image: 
+                radial-gradient(circle at center, rgba(45, 10, 10, 0.15) 0%, transparent 70%),
+                url('https://www.transparenttextures.com/patterns/black-linen.png');
+            color: var(--pale);
+            font-family: 'Cormorant Garamond', serif;
             margin: 0;
-            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             overflow-x: hidden;
-            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                              linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 255, 0, 0.06));
-            background-size: 100% 2px, 3px 100%;
+            transition: background 1s ease;
         }
 
-        .system-wrapper {
-            max-width: 900px;
-            margin: 0 auto;
-            border: 2px solid var(--neon-green);
-            box-shadow: 0 0 15px var(--neon-green);
-            padding: 10px;
+        /* ЕФЕКТ КРОВІ ТА ПЕРЕХОДУ */
+        #blood-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(102, 0, 0, 0.6);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+            transition: opacity 1.2s ease, background 0.5s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #blood-text {
+            font-family: 'Cinzel Decorative', serif;
+            color: #d1d1d1;
+            font-size: 2.5rem;
+            letter-spacing: 12px;
+            opacity: 0;
+            transition: 1.5s ease;
+            text-shadow: 0 0 25px #ff0000;
+            text-align: center;
+        }
+
+        /* ЕЛЕГАНТНА РАМА */
+        .altar {
+            position: relative;
+            width: 800px;
+            background: var(--obsidian);
+            padding: 60px;
+            border: 1px solid var(--gold);
+            box-shadow: 0 0 100px rgba(0,0,0,1);
+            z-index: 10;
+        }
+
+        .altar::before, .altar::after {
+            content: "❦";
+            position: absolute;
+            color: var(--gold);
+            font-size: 30px;
+            opacity: 0.6;
+        }
+        .altar::before { top: 10px; left: 15px; }
+        .altar::after { bottom: 10px; right: 15px; transform: rotate(180deg); }
+
+        .ornament-line {
+            position: absolute;
+            width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            left: 0;
+        }
+        .top-line { top: 40px; }
+        .bottom-line { bottom: 40px; }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Cinzel Decorative', cursive;
+            font-weight: 400;
+            font-size: 3.5rem;
+            color: #d1d1d1;
+            margin: 0;
+            letter-spacing: 10px;
+            text-shadow: 0 0 15px rgba(255,255,255,0.05);
+        }
+
+        .subtitle {
+            font-family: 'Great Vibes', cursive;
+            color: var(--gold);
+            font-size: 1.8rem;
+            margin-top: -10px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 50px;
+            transition: opacity 0.5s ease;
+        }
+
+        .nav-link {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 0.8rem;
+            color: var(--pale);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: 0.6s ease;
             position: relative;
         }
 
-
-        .system-wrapper::before {
-            content: "[SYSTEM_STABLE_v1.04]";
+        .nav-link::after {
+            content: "";
             position: absolute;
-            top: -12px; left: 10px;
-            background: var(--dark-bg);
-            padding: 0 5px;
-            font-size: 10px;
+            bottom: -5px; left: 50%; width: 0; height: 1px;
+            background: var(--crimson);
+            transition: 0.4s;
+            transform: translateX(-50%);
         }
 
-        header h1 {
+        .nav-link:hover, .nav-link.active {
+            color: var(--gold);
+        }
+
+        .nav-link.active::after { width: 100%; }
+
+        .content {
+            display: none;
+            animation: fadeIn 1.5s ease;
+            text-align: justify;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            font-style: italic;
+        }
+
+        .content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.4rem;
+            color: var(--gold);
             text-align: center;
-            color: var(--neon-cyan);
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            text-shadow: 2px 2px var(--neon-pink);
-            border-bottom: 1px double var(--neon-green);
-            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-weight: 400;
         }
 
-        marquee {
-            border-top: 1px solid var(--neon-green);
-            border-bottom: 1px solid var(--neon-green);
-            margin: 15px 0;
-            padding: 5px;
-            background: rgba(0, 255, 0, 0.05);
+        /* VOID SECTION */
+        #void-section {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+            animation: fadeIn 3s ease;
         }
 
-        .menu {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        button, .music-logs a {
-            background: transparent;
-            border: 1px solid var(--neon-green);
-            color: var(--neon-green);
-            padding: 8px 15px;
-            font-family: inherit;
-            font-weight: bold;
-            text-transform: uppercase;
+        .void-text {
+            color: var(--crimson);
+            font-family: 'Cinzel Decorative', serif;
+            letter-spacing: 8px;
+            font-size: 1.2rem;
             cursor: pointer;
-            transition: 0.2s;
-            text-decoration: none;
-            display: inline-block;
+            transition: 1s;
+            text-shadow: 0 0 5px black;
         }
 
-        button:hover, .music-logs li:hover a {
-            background: var(--neon-green);
-            color: var(--dark-bg);
-            box-shadow: 0 0 10px var(--neon-green);
+        .void-text:hover {
+            color: white;
+            text-shadow: 0 0 15px var(--crimson);
         }
 
-        /* --- ТАБИ/ВІКНА --- */
-        .content-box {
-            border: 1px solid var(--neon-green);
-            min-height: 400px;
-            padding: 20px;
-            background: rgba(0, 20, 0, 0.3);
-        }
-
-        .retro-container {
-            display: none; /* Ховаємо за замовчуванням */
-        }
-
-        .active {
+        /* Кнопка клятви */
+        .oath-btn {
             display: block;
-            animation: glitch 0.3s ease;
+            margin: 30px auto 0;
+            padding: 10px 25px;
+            background: transparent;
+            border: 1px solid var(--crimson);
+            color: var(--crimson);
+            font-family: 'Cinzel Decorative', serif;
+            cursor: pointer;
+            letter-spacing: 3px;
+            transition: 0.5s;
         }
 
-        @keyframes glitch {
-            0% { transform: translate(2px, 0); }
-            50% { transform: translate(-2px, 0); filter: hue-rotate(90deg); }
-            100% { transform: translate(0); }
+        .oath-btn:hover {
+            background: var(--crimson);
+            color: #000;
+            box-shadow: 0 0 20px var(--crimson);
         }
 
-        .blink { animation: blinker 0.8s infinite; }
-        @keyframes blinker { 50% { opacity: 0; } }
+        .track-list { margin-top: 30px; }
 
-        .ascii-line { color: var(--neon-pink); text-align: center; font-weight: bold; }
-        .highlight { border: 1px solid var(--neon-cyan); padding: 0 5px; color: var(--neon-cyan); }
-        .brackets { color: var(--neon-pink); }
-
-        /* Еквалайзер та статус */
-        .audio-analyzer { border: 1px solid var(--neon-cyan); padding: 15px; }
-        .equalizer { display: flex; align-items: flex-end; gap: 4px; height: 50px; border-bottom: 1px solid var(--neon-cyan); margin: 15px 0; }
-        .bar { flex: 1; background: var(--neon-cyan); animation: bounce 0.5s infinite alternate; }
-        @keyframes bounce { from { height: 10%; } to { height: 100%; } }
-
-        .music-logs { list-style: none; padding: 0; }
-        .music-logs li { margin: 10px 0; position: relative; }
-        .music-logs a::before { content: "> EXEC_FILE: "; font-size: 10px; color: var(--neon-pink); }
-
-        /* Додаткові лінії фону */
-        .data-stream {
-            position: absolute;
-            right: 5px;
-            top: 50px;
-            width: 100px;
-            font-size: 8px;
-            opacity: 0.3;
-            pointer-events: none;
+        .track-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(99, 84, 59, 0.1);
+            transition: 0.3s;
         }
+
+        .track-item:hover {
+            border-bottom-color: var(--crimson);
+            color: #eee;
+        }
+
+        .track-item a {
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .blood-seal {
+            display: block;
+            margin: 50px auto 0;
+            width: 30px; height: 30px;
+            border: 1px solid var(--gold);
+            background: transparent;
+            color: var(--crimson);
+            font-size: 10px;
+            cursor: pointer;
+            transition: 0.5s;
+            opacity: 0.4;
+        }
+
+        .blood-seal:hover {
+            opacity: 1;
+            background: var(--crimson);
+            color: #000;
+            box-shadow: 0 0 15px var(--crimson);
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.7rem;
+            letter-spacing: 5px;
+            color: #222;
+        }
+
     </style>
 </head>
 <body>
 
-<div class="system-wrapper">
-    <div class="data-stream">
-        01010110<br>00110011<br>STATUS: OK<br>TEMP: O KURWA<br>DISK: Ja Perdole
-    </div>
+<div id="blood-overlay">
+    <div id="blood-text">SANGUIS REGUM</div>
+</div>
 
-    <header>
-        <h1>ВІТАЮ В КРАЮ ДИВ!</h1>
+<div class="altar">
+    <div class="ornament-line top-line"></div>
+    <div class="ornament-line bottom-line"></div>
+
+    <header id="main-header">
+        <h1>TENEBRAE</h1>
+        <div class="subtitle">Whispers from the Abyss</div>
     </header>
 
-    <marquee scrollamount="12">
-        >>> КРИТИЧНИЙ РІВЕНЬ КРУТОСТІ ВИЯВЛЕНО... ЛАСКАВО ПРОCИМО ДО МЕРЕЖІ ANARCHIST_NET... <<< 
-    </marquee>
-
-    <nav class="menu">
-        <button onclick="showTab('home')">[ ГОЛОВНА ]</button>
-        <button onclick="showTab('about')">[ ПРО МЕНЕ ]</button>
-        <button onclick="showTab('music')">[ МУЗИЧНИЙ СТЕК ]</button>
-        <button onclick="showTab('dream')">[ НЕ ДРІБНИЦІ ]</button>
+    <nav id="main-nav">
+        <div class="nav-link active" onclick="showTab(event, 'noir')">N O I R</div>
+        <div class="nav-link" onclick="showTab(event, 'lore')">L O R E</div>
+        <div class="nav-link" onclick="showTab(event, 'echo')">E C H O</div>
+        <div class="nav-link" onclick="showTab(event, 'dark')">D A R K</div>
     </nav>
 
-    <div class="content-box">
-        <div id="home" class="retro-container active">
-            <div style="font-size: 12px; color: var(--neon-cyan);">INITIALIZING BOOT SEQUENCE...</div>
-            <ul style="list-style: none; padding: 0; font-size: 0.8rem; color: #555;">
-                <li>>> [LOAD] KERNEL... OK</li>
-                <li>>> [LOAD] FILESYSTEM... OK</li>
-                <li>>> [EXEC] TOCHNO_NE_VIRUS.EXE... <span class="blink">RUNNING</span></li>
-            </ul>
-            
-            <h2 style="color: var(--neon-green)">C:\> Що це таке...?<span class="blink">_</span></h2>
-            <div class="ascii-line">+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+</div>
-            
-            <p>
-                Я - <span class="highlight">Svan/Anarchist</span>. 
-                Звичайний опис мені робити було лінь, тому я зробив цей сайт!
-            </p>
-            
-            <div style="border: 1px solid var(--neon-green); height: 10px; margin: 15px 0;">
-                <div style="background: var(--neon-green); width: 85%; height: 100%;"></div>
+    <div id="noir" class="content active">
+        <h2>Маніфест Порожнечі</h2>
+        <p>
+            Коли світло згасає, народжується істина. У загублених сутінках, де повітря пахне дощем та старими казками, я плету свої мелодії. Це хаос, заради руйнації тієї вічності, яка затьмарила всіх нас.
+        </p>
+
+        <div id="void-section">
+            <span class="void-text" onclick="reachTruth()">V O I D</span>
+        </div>
+
+        <p style="text-align: center; color: var(--gold); margin-top: 20px;">
+            ✦ ✦ ✦
+        </p>
+    </div>
+
+    <div id="lore" class="content">
+        <h2>Літопис </h2>
+		<p><strong>Вірність</strong> Людина, батьківщина якої загублена в міфах. Людина, яка вірна своїм амбіціям. Людина, яка дивлячись на руйнацію всього, візьме молот, і почне будувати заново. Людина, яка хоче любити кожного, живого і мертвого. Людина, яка мріє про істинну.</p>
+        <p><strong>Мистецтво:</strong> Я - творець світів, що веде героїв через куточки їхньої власної суті.</p>
+        <p><strong>Зброя:</strong> Моя зброя - це музика. Адже музика, є способом говорити без слів, але надавати більше сенсу.</p>
+		<p><strong>Думка:</strong> У тьмі моїх залів, серед чорних вітражів і срібних канделябрів,  
+я визнаю свою відданість Людині — володарю думок, що розривають кайдани слабких.  
+Де його слова — мов клинок, загартований у безодні.</p>
+    </div>
+
+    <div id="echo" class="content">
+        <h2>Відлуння Темряви.
+		Збереженні пісні.</h2>
+        <div class="track-list">
+            <div class="track-item">
+                <span>Beauty Is Only Razor Deep</span>
+                <a href="https://music.youtube.com/watch?v=Q4dxim9Hm28" target="_blank">INVOKE</a>
             </div>
-
-            <p style="border-left: 4px solid var(--neon-pink); padding: 10px; background: rgba(255, 0, 255, 0.05);">
-                Ви дізнаєтесь тут про мене багато цікавинок, хтось поностальгує від дизайну, хтось ще щось... Загалом, насолоджуйтесь кислотою кольорів, будьте всі здорові, й не хворійте! 
-                <br><br>
-                <span class="blink" style="color: var(--dark-bg); background: var(--neon-pink); padding: 0 5px;">ВАЖЛИВО:</span> Bober.exe
-            </p>
-        </div>
-
-        <div id="about" class="retro-container">
-            <h2 style="text-align: center;">*** Дивні дива ***</h2>
-            <div class="ascii-line">####P#0######T###O#Y#####Bi##k####d##ob###r###a##i###z##l######a#</div>
-            <p style="text-align: center;">РУБРИКА: <span class="highlight">ПРО МЕНЕ</span></p>
-            
-            <p>
-                Як ви вже знаєте, я <span class="highlight">Іван</span>, звичайний Житомирянин.
-                <br><br>
-                <span class="brackets">(А такі існують?... Звичайні житомиряни...)</span>
-                <br><br>
-                Якто кожен житомирянин незвичайний. Отож, про що я?..
-            </p>
-            <p>
-                Ах, так, звичайний житомирянин, який любить проводити час з друзями, смакувати щось чудове, скажімо... <span class="highlight">ЧОРНИЙ ЧАЙ</span>...
-            </p>
-            <div class="ascii-line">~~~~~~~~~~~~~~~~~~~~~~~~~~~~</div>
-            <p>
-                Окрім такого дефолту, я граю в <strong>[ ДнД ]</strong>, люблю почитати всякі дрібниці <span class="brackets">(Нині читаю Ніцше)</span>, ще граю на гітарі, на електрогітарі (Фанк, рок, BLACK_METAL)!
-            </p>
-            <p style="text-align: center; border: 1px dashed var(--neon-cyan); padding: 15px;">
-                Ну хіба не круто? <br>
-                Та я б сказав <span class="blink" style="color:var(--neon-pink); font-size: 1.5em;">>> ДУЖЕ! <<</span>
-            </p>
-        </div>
-
-        <div id="music" class="retro-container">
-            <div class="audio-analyzer">
-                <div style="color: var(--neon-cyan); font-size: 11px;">
-                    [SCANNING ULTRA_BASS_PRODUCTION...] <br>
-                    [SOURCE]: ANARCHIST_RADIO_STATION
-                </div>
-
-                <div class="equalizer">
-                    <div class="bar" style="animation-delay: 0.1s"></div>
-                    <div class="bar" style="animation-delay: 0.3s"></div>
-                    <div class="bar" style="animation-delay: 0.2s"></div>
-                    <div class="bar" style="animation-delay: 0.4s"></div>
-                    <div class="bar" style="animation-delay: 0.1s"></div>
-                    <div class="bar" style="animation-delay: 0.5s"></div>
-                </div>
-
-                <h2 style="font-size: 16px; color: var(--neon-green);">AUDIO_INDEX_POTUZHNA BAZA:</h2>
-                
-                <ul class="music-logs">
-                    <li><a href="https://music.youtube.com/watch?v=d11xns8lE4w&si=LQBtMDY8uSTKOyIv">Franz Ferdinant - Take Me Out</a></li>
-                    <li><a href="https://music.youtube.com/watch?v=X0O5DCp7bnw&si=xHRvu6NwjPWGJbyP">Федір Богдан - Аеліта</a></li>
-                    <li><a href="https://music.youtube.com/watch?v=8KciRaANKmo&si=EUThX7QGnq9dfoih" target="_blank">The destroyers - Bad to the bone</a></li>
-                    <li><a href="https://music.youtube.com/watch?v=0CNPR2qNzxk&si=RuB6HmL9s4ncWq5X" target="_blank"> Guns N` Roses</a></li>
-                    <li><a href="https://music.youtube.com/watch?v=Shr_pHoGr2M&si=fVD0Vrbta5U9SJCa">Franz Ferdinant - This fffire</a></li>
-                </ul>
-
-                <p style="border-top: 1px solid var(--neon-green); padding-top: 10px; font-size: 11px; color: var(--neon-pink);">
-                    <b>ERR_MSG:</b> Якщо потік порожній - ініціюйте фізичний вплив на термінал (Вдарьте добряче по монітору).
-                </p>
+            <div class="track-item">
+                <span>Krätze</span>
+                <a href="https://music.youtube.com/watch?v=IsWXomcmJ5Q" target="_blank">INVOKE</a>
             </div>
-        </div>
-
-        <div id="dream" class="retro-container">
-            <h2>[ DOSTUP_ZAKRITO ]</h2>
-            <div class="ascii-line">XXXXXXXXXXXXXXXXXXXXXXXXXXXX</div>
-            <p>Цей розділ знаходиться під захистом 128-бітного шифрування... Або тут просто ще нічого нема. (Скоро буде)</p>
+            <div class="track-item">
+                <span>Night Pulls All Perception</span>
+                <a href="https://music.youtube.com/watch?v=l5KsffAnbOU" target="_blank">INVOKE</a>
+            </div>
+            <div class="track-item" style="color: var(--crimson);">
+                <span>Seven Tears Are Flowing to the River</span>
+                <a href="https://music.youtube.com/watch?v=9uVRyso4y0g" target="_blank" style="color: var(--crimson);">SACRIFICE</a>
+            </div>
         </div>
     </div>
 
-    <footer style="margin-top: 20px; text-align: center; font-size: 10px;">
-        <div class="ascii-line">____________________________________</div>
-        <p>BUILD_DATE: 1988.04.12 // SECURE_CONNECTION_ESTABLISHED</p>
-        <p>© Anarchist_SYSTEMS. ALL RIGHTS RESERVED SBU. SLUZHBA_BOZHA_UKRAINI</p>
-    </footer>
+    <div id="dark" class="content">
+        <h2>Тіні минулого</h2>
+        <p>Тут спочивають ті, хто не зміг пройти через безодню. Лише тиша є їхнім вічним супутником. Кожен з них залишить тут свої слова.</p>
+		<p><strong>Слово перше:</strong> Кожен хоче любові. Навіть той, хто не знає як це. Кожен хоче любові.</p>
+    </div>
+
+    <div id="truth" class="content">
+        <h2>Святилище Істини</h2>
+        <p id="truth-desc" style="text-align: center;">Ви переступили поріг, з якого немає вороття для звичайних смертних. Тепер ви частина темряви.</p>
+        <p id="oath-question" style="text-align: center; color: var(--crimson); font-size: 1.3rem;">Ти станеш на коліна перед вічністю?</p>
+        <button id="oath-button" class="oath-btn" onclick="takeOath()">ПРИЙНЯТИ КЛЯТВУ ВІРНОСТІ</button>
+        <p id="already-sworn" style="text-align: center; color: var(--gold); display: none;">Ви вже поклялися. Тепер ви — Тінь.</p>
+        <button id="exit-truth-btn" class="oath-btn" style="display:none;" onclick="returnFromVoid()">ПОВЕРНУТИСЯ ДО СВІТУ</button>
+    </div>
+
+    <button id="seal-btn" class="blood-seal" title="Ritual of Blood" onclick="seal()">♰</button>
+
+    <footer>В ім'я всіх, хто ще живий.</footer>
 </div>
 
 <script>
-    function showTab(tabId) {
-        var contents = document.getElementsByClassName('retro-container');
-        for (var i = 0; i < contents.length; i++) {
-            contents[i].classList.remove('active');
-        }
-        document.getElementById(tabId).classList.add('active');
+    let isOathTaken = false;
+
+    function showTab(e, id) {
+        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if (e) e.currentTarget.classList.add('active');
+    }
+
+    function seal() {
+        const overlay = document.getElementById('blood-overlay');
+        const bText = document.getElementById('blood-text');
+        const voidSection = document.getElementById('void-section');
+
+        overlay.style.opacity = "1";
+        bText.style.opacity = "1";
+        bText.innerText = "SANGUIS REGUM";
+
+        setTimeout(() => {
+            overlay.style.opacity = "0";
+            bText.style.opacity = "0";
+            voidSection.style.display = "block";
+        }, 2000);
+    }
+
+    function reachTruth() {
+        const overlay = document.getElementById('blood-overlay');
+        const bText = document.getElementById('blood-text');
+        const nav = document.getElementById('main-nav');
+        const sealBtn = document.getElementById('seal-btn');
         
-        // Звуковий ефект або просто лог в консоль для антуражу
-        console.log("Navigating to: " + tabId + "... ACCESS GRANTED.");
+        // Логіка перевірки клятви
+        if (isOathTaken) {
+            bText.innerText = "КЛЯТВУ ВЖЕ ПРИЙНЯТО. ДОРОГИ НАЗАД НЕМАЄ.";
+            overlay.style.background = "rgba(45, 10, 10, 0.9)"; // Глибокий бордовий для "вторинного" входу
+        } else {
+            bText.innerText = "ТЕПЕР ВИ ГОТОВІ";
+            overlay.style.background = "white"; 
+        }
+
+        bText.style.color = isOathTaken ? "var(--crimson)" : "white";
+        bText.style.opacity = "1";
+        overlay.style.opacity = "1";
+
+        setTimeout(() => {
+            overlay.style.opacity = "0";
+            bText.style.opacity = "0";
+            overlay.style.background = "rgba(102, 0, 0, 0.6)";
+
+            showTab(null, 'truth');
+            
+            nav.style.opacity = "0";
+            nav.style.pointerEvents = "none";
+            sealBtn.style.display = "none";
+        }, 1500);
+    }
+
+    function takeOath() {
+        isOathTaken = true;
+        
+        // Оновлення інтерфейсу всередині Truth
+        document.getElementById('oath-question').style.display = 'none';
+        document.getElementById('oath-button').style.display = 'none';
+        document.getElementById('already-sworn').style.display = 'block';
+        document.getElementById('exit-truth-btn').style.display = 'block';
+        
+        alert("Клятву прийнято. Твоя душа належить вічності.");
+        returnFromVoid();
+    }
+
+    function returnFromVoid() {
+        const nav = document.getElementById('main-nav');
+        const sealBtn = document.getElementById('seal-btn');
+        
+        nav.style.opacity = "1";
+        nav.style.pointerEvents = "all";
+        sealBtn.style.display = "block";
+        
+        showTab(null, 'noir');
+        document.querySelector('.nav-link').classList.add('active');
     }
 </script>
 
